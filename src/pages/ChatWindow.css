@@ -1,0 +1,100 @@
+.chat-window {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  background-color: #1e1e1e;
+  color: #fff;
+  overflow-y: auto;
+}
+
+.messages {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.message {
+  max-width: 60%;
+  padding: 10px;
+  border-radius: 10px;
+  position: relative;
+  margin: 6px 0;
+  word-wrap: break-word;
+}
+
+.sent {
+  align-self: flex-end;
+  background-color: #005c4b;
+}
+
+.received {
+  align-self: flex-start;
+  background-color: #2a2a2a;
+}
+
+.chat-window.empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #aaa;
+}
+
+.message-input-container {
+  display: flex;
+  padding: 10px;
+  border-top: 1px solid #444;
+  background-color: #2a2f32;
+}
+
+.message-input-container input {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 20px;
+  margin-right: 10px;
+  background-color: #3a3f42;
+  color: white;
+}
+
+.message-input-container button {
+  background-color: #005c4b;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.message-input-container button:hover {
+  background-color: #007d67;
+}
+
+.timestamp {
+  font-size: 0.7rem;
+  color: #ccc;
+  display: block;
+  margin-top: 4px;
+  text-align: right;
+}
+
+/* ✅ MEDIA QUERY BIEN UBICADA */
+@media (max-width: 768px) {
+  .messages {
+    padding: 0.5rem;
+  }
+
+  .message {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.8rem;
+  }
+
+  .timestamp {
+    font-size: 0.65rem;
+  }
+
+  .message-input-container input,
+  .message-input-container button {
+    font-size: 1rem;
+  }
+}
