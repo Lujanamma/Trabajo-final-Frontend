@@ -65,7 +65,7 @@
   border-radius: 50%;
 }
 
-/* ✅ RESPONSIVE para pantallas pequeñas */
+
 @media (max-width: 768px) {
   .sidebar {
     width: 100%;

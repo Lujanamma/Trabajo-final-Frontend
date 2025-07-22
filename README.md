@@ -1,12 +1,37 @@
-# React + Vite
+# 💬 WhatsApp Web Clon – Proyecto Final Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Este es un clon funcional de WhatsApp Web construido con **React**, como proyecto final de frontend. La app simula conversaciones con personajes ficticios, respuestas automáticas, y cuenta con login, modo oscuro, vista responsive y navegación protegida.
 
-Currently, two official plugins are available:
+## ✨ Características
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Login simulado con persistencia en `localStorage`
+- Vista principal con barra lateral y ventana de chat
+- Chats con personajes ficticios y avatares personalizados (SVG)
+- Envío de mensajes + respuestas automáticas por bot
+- Búsqueda de mensajes en el chat
+- Timestamps en cada mensaje
+- Rutas protegidas con `react-router-dom`
+- Soporte para modo oscuro
+- Diseño responsive
 
-## Expanding the ESLint configuration
+## 📁 Estructura del proyecto
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+src/
+├── assets/
+│ └── avatars/ # Avatares SVG
+├── components/
+│ ├── Navbar.jsx
+│ ├── Sidebar.jsx
+│ └── ChatListItem.jsx
+├── context/
+│ └── UserContext.jsx # Contexto global de usuario y chats
+├── data/
+│ ├── contacts.js # Lista de chats
+│ └── botresponses.js # Respuestas automáticas por bot
+├── pages/
+│ ├── Login.jsx
+│ ├── Chat.jsx
+│ └── ChatWindow.jsx
+├── App.jsx
+├── main.jsx
+└── index.css

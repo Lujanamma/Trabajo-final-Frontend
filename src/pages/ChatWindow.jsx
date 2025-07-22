@@ -4,13 +4,13 @@ import './ChatWindow.css';
 import botResponses from '../data/botresponses';
 import { Search, Phone, Video, MoreVertical } from 'lucide-react';
 
-// Formatea timestamp a hh:mm
+
 const formatTime = (isoString) => {
   const date = new Date(isoString);
   return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 };
 
-// Devuelve texto con coincidencias marcadas
+
 const getHighlightedText = (text, searchTerm) => {
   if (!searchTerm.trim()) return text;
   const parts = text.split(new RegExp(`(${searchTerm})`, 'gi'));
@@ -32,7 +32,7 @@ const ChatWindow = () => {
   const [newMessage, setNewMessage] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Si no hay chat seleccionado
+
   if (!selectedChatId) {
     
     return <div className="chat-window empty">Seleccioná un chat para comenzar</div>;
@@ -46,7 +46,7 @@ const ChatWindow = () => {
 
   const chatMessages = messages[selectedChatId] || [];
 
-  // Enviar mensaje propio + respuesta automática
+  
   const handleSendMessage = () => {
     if (!newMessage.trim()) return;
 
@@ -83,7 +83,7 @@ const ChatWindow = () => {
 
   return (
     <div className="chat-window">
-      {/* Cabecera del chat */}
+      {}
       <div className="chat-header">
         <div className="chat-info">
           <img src={chat.avatar} alt={chat.name} className="chat-avatar" />
@@ -100,7 +100,7 @@ const ChatWindow = () => {
         </div>
       </div>
 
-      {/* Buscador de mensajes */}
+      {}
       <div className="search-messages">
         <input
           type="text"
@@ -110,7 +110,7 @@ const ChatWindow = () => {
         />
       </div>
 
-      {/* Lista de mensajes */}
+      {}
       <div className="messages">
         {chatMessages.map((msg, index) => (
           <div
@@ -123,7 +123,7 @@ const ChatWindow = () => {
         ))}
       </div>
 
-      {/* Input para enviar mensajes */}
+      {}
       <div className="message-input-container">
         <input
           type="text"
