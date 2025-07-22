@@ -1,5 +1,6 @@
-import { createContext, useState } from 'react';
+import { createContext, useState, useEffect } from 'react';
 import messagesData from '../data/messages';
+import chatData from '../data/contacts.js'; // 👈 agregá esto
 
 export const UserContext = createContext();
 
@@ -9,12 +10,33 @@ export const UserProvider = ({ children }) => {
   });
 
   const [selectedChatId, setSelectedChatId] = useState(null);
+  const [messages, setMessages] = useState(messagesData);
 
-  const [messages, setMessages] = useState(messagesData); // 👈 usamos los mensajes
+  const [chats, setChats] = useState(() => {
+    return JSON.parse(localStorage.getItem('chats')) || [];
+  });
+
+  // Cargar chats iniciales si no están en localStorage
+  useEffect(() => {
+    const stored = localStorage.getItem('chats');
+    if (!stored) {
+      setChats(chatData);
+      localStorage.setItem('chats', JSON.stringify(chatData));
+    }
+  }, []);
 
   return (
     <UserContext.Provider
-      value={{ user, setUser, selectedChatId, setSelectedChatId, messages, setMessages }}
+      value={{
+        user,
+        setUser,
+        selectedChatId,
+        setSelectedChatId,
+        messages,
+        setMessages,
+        chats,
+        setChats,
+      }}
     >
       {children}
     </UserContext.Provider>

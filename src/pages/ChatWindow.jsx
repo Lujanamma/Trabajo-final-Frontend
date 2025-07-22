@@ -1,74 +1,129 @@
 import React, { useContext, useState } from 'react';
 import { UserContext } from '../context/UserContext';
 import './ChatWindow.css';
-import botResponses from '../data/botresponses'; // arriba, junto a los otros imports
+import botResponses from '../data/botresponses';
+import { Search, Phone, Video, MoreVertical } from 'lucide-react';
 
+// Formatea timestamp a hh:mm
 const formatTime = (isoString) => {
   const date = new Date(isoString);
   return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 };
 
-const ChatWindow = () => {
-  const { selectedChatId, messages, setMessages } = useContext(UserContext);
-  const [newMessage, setNewMessage] = useState('');
+// Devuelve texto con coincidencias marcadas
+const getHighlightedText = (text, searchTerm) => {
+  if (!searchTerm.trim()) return text;
+  const parts = text.split(new RegExp(`(${searchTerm})`, 'gi'));
+  return parts.map((part, index) =>
+    part.toLowerCase() === searchTerm.toLowerCase() ? (
+      <mark key={index}>{part}</mark>
+    ) : (
+      part
+    )
+  );
+};
 
-  if (!selectedChatId) {
-    return (
-      <div className="chat-window empty">
-        <p>Seleccioná un chat para comenzar</p>
-      </div>
-    );
+const ChatWindow = () => {
+  const { selectedChatId, messages, setMessages, chats } = useContext(UserContext);
+  if (!chats || !Array.isArray(chats)) {
+    return <div className="chat-window empty">Cargando chats...</div>;
   }
+  
+  const [newMessage, setNewMessage] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+
+  // Si no hay chat seleccionado
+  if (!selectedChatId) {
+    
+    return <div className="chat-window empty">Seleccioná un chat para comenzar</div>;
+  }
+
+  const chat = chats.find(c => String(c.id) === String(selectedChatId));
+  if (!chat) {
+    return <div className="chat-window empty">No se encontró el chat seleccionado.</div>;
+  }
+  
 
   const chatMessages = messages[selectedChatId] || [];
 
+  // Enviar mensaje propio + respuesta automática
   const handleSendMessage = () => {
     if (!newMessage.trim()) return;
-  
-    const updated = {
-      ...messages,
-      [selectedChatId]: [
-        ...chatMessages,
-        { text: newMessage, from: 'me', timestamp: new Date().toISOString() }
-      ]
+
+    const newEntry = {
+      text: newMessage,
+      from: 'me',
+      timestamp: new Date().toISOString()
     };
-  
-    setMessages(updated);
+
+    setMessages(prev => ({
+      ...prev,
+      [selectedChatId]: [...(prev[selectedChatId] || []), newEntry]
+    }));
+
     setNewMessage('');
-  
-    // Simular respuesta automática
-   // Simular respuesta automática
-setTimeout(() => {
-  const respuestas = botResponses[selectedChatId] || ['...'];
-  const respuestaAleatoria =
-    respuestas[Math.floor(Math.random() * respuestas.length)];
 
-  setMessages(prev => ({
-    ...prev,
-    [selectedChatId]: [
-      ...(prev[selectedChatId] || []),
-      { text: respuestaAleatoria, from: 'them', timestamp: new Date().toISOString() }
-    ]
-  }));
-}, 1000);
+    setTimeout(() => {
+      const respuestas = botResponses[selectedChatId] || ['...'];
+      const random = respuestas[Math.floor(Math.random() * respuestas.length)];
 
+      setMessages(prev => ({
+        ...prev,
+        [selectedChatId]: [
+          ...(prev[selectedChatId] || []),
+          {
+            text: random,
+            from: 'them',
+            timestamp: new Date().toISOString()
+          }
+        ]
+      }));
+    }, 1000);
   };
-  
 
   return (
     <div className="chat-window">
-     <div className="messages">
-  {chatMessages.map((msg, index) => (
-    <div
-      key={index}
-      className={`message ${msg.from === 'me' ? 'sent' : 'received'}`}
-    >
-      <span>{msg.text}</span>
-      <span className="timestamp">{formatTime(msg.timestamp)}</span>
-    </div>
+      {/* Cabecera del chat */}
+      <div className="chat-header">
+        <div className="chat-info">
+          <img src={chat.avatar} alt={chat.name} className="chat-avatar" />
+          <div>
+            <div className="chat-name">{chat.name}</div>
+            <div className="chat-status">En línea</div>
+          </div>
+        </div>
+        <div className="chat-actions">
+          <Search className="icon" />
+          <Phone className="icon" />
+          <Video className="icon" />
+          <MoreVertical className="icon" />
+        </div>
+      </div>
+
+      {/* Buscador de mensajes */}
+      <div className="search-messages">
+        <input
+          type="text"
+          placeholder="Buscar en el chat..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
+
+      {/* Lista de mensajes */}
+      <div className="messages">
+        {chatMessages.map((msg, index) => (
+          <div
+            key={index}
+            className={`message ${msg.from === 'me' ? 'sent' : 'received'}`}
+          >
+            <span>{getHighlightedText(msg.text, searchTerm)}</span>
+            <span className="timestamp">{formatTime(msg.timestamp)}</span>
+          </div>
         ))}
       </div>
 
+      {/* Input para enviar mensajes */}
       <div className="message-input-container">
         <input
           type="text"

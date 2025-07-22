@@ -3,22 +3,23 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { UserContext } from '../context/UserContext.jsx'
 
 function Perfil() {
-  const { nombre } = useParams() // <- acá lo usás
-  const { usuario, setUsuario } = useContext(UserContext)
+  const { nombre } = useParams()
+  const { user, setUser } = useContext(UserContext)
   const navigate = useNavigate()
 
   const cerrarSesion = () => {
-    setUsuario('')
-    localStorage.removeItem('usuario')
+    setUser(null)
+    localStorage.removeItem('user')
     navigate('/')
   }
 
   return (
     <div style={{ padding: '2rem', textAlign: 'center' }}>
-      <h1>¡Hola, {nombre || usuario}!</h1>
+      <h1>¡Hola, {nombre || user || 'Invitado'}!</h1>
       <p>Bienvenido a tu perfil.</p>
       <button onClick={cerrarSesion}>Cerrar sesión</button>
     </div>
   )
 }
+
 export default Perfil
