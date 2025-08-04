@@ -1,7 +1,7 @@
 import React from 'react';
 import Sidebar from './Sidebar';
 import ChatWindow from './ChatWindow';
-import './Chat.css'; 
+import './Chat.css'; // Asegurate que está
 
 const Home = () => {
   return (

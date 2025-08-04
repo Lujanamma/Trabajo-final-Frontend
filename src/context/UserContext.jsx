@@ -1,6 +1,6 @@
 import { createContext, useState, useEffect } from 'react';
 import messagesData from '../data/messages';
-import chatData from '../data/contacts.js'; 
+import chatData from '../data/contacts.js'; // 👈 agregá esto
 
 export const UserContext = createContext();
 
@@ -16,7 +16,7 @@ export const UserProvider = ({ children }) => {
     return JSON.parse(localStorage.getItem('chats')) || [];
   });
 
-
+  // Cargar chats iniciales si no están en localStorage
   useEffect(() => {
     const stored = localStorage.getItem('chats');
     if (!stored) {
