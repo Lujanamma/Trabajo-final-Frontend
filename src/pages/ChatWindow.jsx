@@ -14,7 +14,7 @@ const BOT_RESPONSES = {
   'Marquitos 5000': ['¡Hola! Soy Marquitos', '5000 veces mejor']
 };
 
-const ChatWindow = () => {
+const ChatWindow = ({ onBack, className = '' }) => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { chats, messages, setMessages } = useContext(UserContext);
@@ -92,10 +92,10 @@ const ChatWindow = () => {
   };
 
   return (
-    <div className="chat-window">
+<div className={`chat-window ${className}`}>
       {/* Header para móvil */}
       {isMobile && (
-  <div className="mobile-header">
+        <div className="mobile-chat-header">
     <button 
       onClick={onBack} 
       className="mobile-back-button"

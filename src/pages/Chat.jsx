@@ -8,38 +8,45 @@ const Chat = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-  const [showSidebar, setShowSidebar] = useState(true);
+  const [showSidebar, setShowSidebar] = useState(!id);
 
+  // Detectar si es mobile
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth <= 768;
       setIsMobile(mobile);
       if (!mobile) {
-        setShowSidebar(true); // en desktop, siempre visible
+        setShowSidebar(true); // En desktop siempre mostramos ambos
       } else {
-        setShowSidebar(!id); // en mobile, mostrar sidebar si no hay chat seleccionado
+        setShowSidebar(!id); // En mobile: mostramos sidebar solo si no hay chat seleccionado
       }
     };
 
-    handleResize(); // al cargar
+    handleResize(); // Corre al inicio
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, [id]);
 
+  // Cuando seleccionás un chat desde la lista
   const handleChatSelect = (chatId) => {
     navigate(`/chat/${chatId}`);
-    if (isMobile) setShowSidebar(false); // ocultar lista en mobile
+    if (isMobile) {
+      setShowSidebar(false); // Oculta lista
+    }
   };
 
+  // Cuando volvés desde un chat
   const handleBack = () => {
-    navigate('/chat'); // volver a lista
-    if (isMobile) setShowSidebar(true);
+    navigate('/chat');
+    if (isMobile) {
+      setShowSidebar(true); // Muestra lista
+    }
   };
 
   return (
     <div className="chat-container">
-      {/* Sidebar (si corresponde mostrarla) */}
-      {(!isMobile || showSidebar) && (
+      {/* Mostrar sidebar solo si corresponde */}
+      {(showSidebar || !isMobile) && (
         <Sidebar
           onChatSelect={handleChatSelect}
           isMobile={isMobile}
@@ -47,9 +54,12 @@ const Chat = () => {
         />
       )}
 
-      {/* ChatWindow (solo si hay un ID y no estamos mostrando la sidebar en mobile) */}
+      {/* Mostrar ventana de chat solo si hay id y no se muestra sidebar en mobile */}
       {id && (!isMobile || !showSidebar) && (
-        <ChatWindow onBack={handleBack} />
+        <ChatWindow 
+  onBack={handleBack} 
+  className={isMobile ? 'active' : ''} 
+/>
       )}
     </div>
   );

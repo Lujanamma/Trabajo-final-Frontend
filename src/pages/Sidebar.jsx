@@ -1,41 +1,37 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
-import { Search, MoreVertical, Menu, ArrowLeft } from 'lucide-react';
+import { Search, MoreVertical, ArrowLeft } from 'lucide-react';
 import './Sidebar.css';
 
-const Sidebar = ({ isMobile, onClose }) => {
+const Sidebar = ({ isMobile, onClose, onChatSelect }) => {
   const { user, chats, messages } = useContext(UserContext);
   const [searchTerm, setSearchTerm] = useState('');
+  const [isMobileView, setIsMobileView] = useState(window.innerWidth <= 768);
   const navigate = useNavigate();
-  const [isMobileView, setIsMobileView] = useState(false);
 
-  // Detectar si es móvil
   useEffect(() => {
     const handleResize = () => {
       setIsMobileView(window.innerWidth <= 768);
     };
-    
-    handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Función para resaltar coincidencias
   const highlightMatch = (text) => {
     if (!searchTerm || !text) return text;
-    
+
     const parts = text.split(new RegExp(`(${searchTerm})`, 'gi'));
-    return parts.map((part, i) => 
-      part.toLowerCase() === searchTerm.toLowerCase() 
-        ? <strong key={i}>{part}</strong> 
+    return parts.map((part, i) =>
+      part.toLowerCase() === searchTerm.toLowerCase()
+        ? <strong key={i}>{part}</strong>
         : part
     );
   };
 
   const filteredChats = chats.filter(chat => {
     const chatMatches = chat.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const messageMatches = messages[chat.id]?.some(msg => 
+    const messageMatches = messages[chat.id]?.some(msg =>
       msg.text.toLowerCase().includes(searchTerm.toLowerCase())
     );
     return chatMatches || messageMatches;
@@ -47,32 +43,26 @@ const Sidebar = ({ isMobile, onClose }) => {
   };
 
   const handleChatClick = (chatId) => {
-    navigate(`/chat/${chatId}`);
+    onChatSelect(chatId); // Nueva forma de manejar selección de chat
     setSearchTerm('');
-    if (isMobileView && onClose) {
-      onClose(); // Cierra el sidebar en móvil al seleccionar chat
-    }
   };
 
   return (
-    <div className={`sidebar-container ${isMobile ? 'mobile-sidebar' : ''}`}>
-      {/* Header del sidebar */}
+    <div className={`sidebar-container ${isMobile ? 'mobile-sidebar active' : ''}`}>
+      {/* Encabezado */}
       <div className="sidebar-header">
         <div className="header-left">
           {isMobileView && (
-            <button 
-              className="mobile-back-button"
-              onClick={onClose}
-            >
+            <button className="mobile-back-button" onClick={onClose}>
               <ArrowLeft size={24} />
             </button>
           )}
           <h2>Bienvenido, {user?.name || 'Usuario'}</h2>
         </div>
         <div className="header-icons">
-          <Search 
-            className="icon" 
-            onClick={() => document.querySelector('.search-input input')?.focus()} 
+          <Search
+            className="icon"
+            onClick={() => document.querySelector('.search-input input')?.focus()}
           />
           <MoreVertical className="icon" />
         </div>
@@ -82,8 +72,8 @@ const Sidebar = ({ isMobile, onClose }) => {
       <div className="search-container">
         <div className="search-input">
           <Search size={18} className="search-icon" />
-          <input 
-            type="text" 
+          <input
+            type="text"
             placeholder="Buscar o empezar nuevo chat"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -105,9 +95,9 @@ const Sidebar = ({ isMobile, onClose }) => {
               <div className="chat-name-row">
                 <span className="chat-name">{highlightMatch(chat.name)}</span>
                 <span className="chat-time">
-                  {new Date(messages[chat.id]?.[0]?.timestamp).toLocaleTimeString([], { 
-                    hour: '2-digit', 
-                    minute: '2-digit' 
+                  {new Date(messages[chat.id]?.[0]?.timestamp).toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit'
                   })}
                 </span>
               </div>
