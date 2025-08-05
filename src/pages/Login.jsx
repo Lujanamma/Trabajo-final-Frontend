@@ -1,7 +1,7 @@
-// src/pages/Login.jsx
 import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
+import '../Login.css';
 
 const Login = () => {
   const { setUser } = useContext(UserContext);
@@ -10,39 +10,34 @@ const Login = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!nombre.trim()) return;
 
-    const nuevoUsuario = { name: nombre };
+    const nuevoUsuario = { name: nombre.trim() };
     setUser(nuevoUsuario);
-
-    // ✅ Obtener y actualizar chats en localStorage
-    const chatsGuardados = JSON.parse(localStorage.getItem('chats')) || [];
-
-    const nuevoChat = {
-      id: chatsGuardados.length + 1,
-      name: nombre,
-    };
-
-    const nuevosChats = [...chatsGuardados, nuevoChat];
-    localStorage.setItem('chats', JSON.stringify(nuevosChats));
-
-    // ✅ Redirigir al nuevo chat
-    navigate(`/chat/${nuevoChat.id}`);
+    navigate('/chat'); 
   };
 
   return (
-    <div style={{ padding: '2rem', textAlign: 'center' }}>
-      <h1>Iniciar sesión</h1>
-      <form onSubmit={handleSubmit}>
+    <div className="login-container">
+      <form className="login-form" onSubmit={handleSubmit}>
+        <h2 className="login-titulo">Iniciar sesión</h2>
         <input
+          className="login-input"
           type="text"
-          placeholder="Tu nombre"
+          placeholder="Ingresa tu nombre"
           value={nombre}
           onChange={(e) => setNombre(e.target.value)}
           required
-          style={{ padding: '0.5rem', fontSize: '1rem' }}
+          minLength={2}
+          maxLength={20}
         />
-        <br /><br />
-        <button type="submit">Entrar</button>
+        <button 
+          className="login-button" 
+          type="submit"
+          disabled={!nombre.trim()}
+        >
+          Entrar al chat
+        </button>
       </form>
     </div>
   );

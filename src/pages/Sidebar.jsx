@@ -1,14 +1,12 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
-import { Search, MoreVertical, ArrowLeft } from 'lucide-react';
+import { Search, MoreVertical } from 'lucide-react';
 import './Sidebar.css';
 
-const Sidebar = ({ isMobile, onClose, onChatSelect }) => {
+const Sidebar = ({ isMobile, onChatSelect }) => {
   const { user, chats, messages } = useContext(UserContext);
   const [searchTerm, setSearchTerm] = useState('');
   const [isMobileView, setIsMobileView] = useState(window.innerWidth <= 768);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const handleResize = () => {
@@ -20,7 +18,6 @@ const Sidebar = ({ isMobile, onClose, onChatSelect }) => {
 
   const highlightMatch = (text) => {
     if (!searchTerm || !text) return text;
-
     const parts = text.split(new RegExp(`(${searchTerm})`, 'gi'));
     return parts.map((part, i) =>
       part.toLowerCase() === searchTerm.toLowerCase()
@@ -43,20 +40,14 @@ const Sidebar = ({ isMobile, onClose, onChatSelect }) => {
   };
 
   const handleChatClick = (chatId) => {
-    onChatSelect(chatId); // Nueva forma de manejar selección de chat
+    onChatSelect(chatId);
     setSearchTerm('');
   };
 
   return (
     <div className={`sidebar-container ${isMobile ? 'mobile-sidebar active' : ''}`}>
-      {/* Encabezado */}
       <div className="sidebar-header">
         <div className="header-left">
-          {isMobileView && (
-            <button className="mobile-back-button" onClick={onClose}>
-              <ArrowLeft size={24} />
-            </button>
-          )}
           <h2>Bienvenido, {user?.name || 'Usuario'}</h2>
         </div>
         <div className="header-icons">
@@ -68,7 +59,6 @@ const Sidebar = ({ isMobile, onClose, onChatSelect }) => {
         </div>
       </div>
 
-      {/* Barra de búsqueda */}
       <div className="search-container">
         <div className="search-input">
           <Search size={18} className="search-icon" />
@@ -82,7 +72,6 @@ const Sidebar = ({ isMobile, onClose, onChatSelect }) => {
         </div>
       </div>
 
-      {/* Lista de chats */}
       <div className="chat-list">
         {filteredChats.map(chat => (
           <div

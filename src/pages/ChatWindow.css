@@ -1,17 +1,15 @@
-/* Estilos generales */
 .chat-window {
   flex: 1;
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  max-height: -webkit-fill-available; /* Nuevo: mejor soporte para móvil */
+  height: 100dvh;
+  max-height: -webkit-fill-available;
   background: #0b141a;
   position: relative;
   overflow: hidden;
-  box-sizing: border-box; /* Asegura que padding no afecte dimensiones */
+  box-sizing: border-box;
 }
 
-/* Cabecera */
 .chat-header, .mobile-header {
   position: sticky;
   top: 0;
@@ -61,7 +59,6 @@
   font-size: clamp(16px, 2vw, 20px);
 }
 
-/* Mensajes */
 .messages-container {
   flex: 1;
   padding: 10px 16px;
@@ -112,7 +109,6 @@
   margin-right: 20px;
 }
 
-/* Ticks de estado */
 .message-meta {
   display: flex;
   justify-content: flex-end;
@@ -133,7 +129,6 @@
   align-items: center;
 }
 
-/* Input de mensaje */
 .message-input-container {
   display: flex;
   padding: 8px 12px;
@@ -164,7 +159,6 @@
   padding: 8px;
 }
 
-/* Scrollbar */
 .messages-container::-webkit-scrollbar {
   width: 6px;
 }
@@ -174,7 +168,6 @@
   border-radius: 3px;
 }
 
-/* Buscador */
 .search-container {
   padding: 10px 16px;
   background: #111b21;
@@ -211,7 +204,6 @@
   color: #aebac1;
 }
 
-/* Resaltado de texto */
 .message-bubble strong {
   font-weight: normal;
   background-color: rgba(0, 92, 75, 0.6);
@@ -231,11 +223,7 @@
   100% { background-color: rgba(0, 92, 75, 0.6); }
 }
 
-/* ===== ESTILOS PARA MÓVIL ===== */
 @media (max-width: 768px) {
-  /* Header móvil */
-
-
   .standard-header {
     display: none;
   }
@@ -272,30 +260,19 @@
     text-overflow: ellipsis;
   }
 
-  .mobile-contact-status {
-    font-size: 13px;
-    color: #8696a0;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  /* Ajustes para el área de mensajes */
   .messages-container {
     flex: 1;
     padding: 10px 16px;
-    overflow-y: auto;
-    overscroll-behavior-y: contain; /* Evita efectos de scroll no deseados */
-    -webkit-overflow-scrolling: touch; /* Mejor scroll en iOS */
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
     background-image: url('../assets/whatsapp-bg.jpeg');
     background-size: contain;
     background-repeat: repeat;
     display: flex;
     flex-direction: column;
-    min-height: 0; /* Importante para flex correcto */
+    min-height: 0;
   }
 
-  /* Input fijo en la parte inferior */
   .message-input-container {
     position: sticky;
     bottom: 0;
@@ -306,8 +283,6 @@
 }
 
 @media (min-width: 769px) {
-
-  
   .standard-header {
     display: flex;
   }

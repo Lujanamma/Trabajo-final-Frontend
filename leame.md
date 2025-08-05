@@ -2,13 +2,13 @@
 
 Este proyecto es un clon simple de WhatsApp Web desarrollado como trabajo final de la cursada de Frontend.
 
-## 🛠 Tecnologías
+🛠 Tecnologías
 - React
 - React Router DOM
 - Context API
 - Vite
 
-## 📋 Funcionalidades
+ 📋 Funcionalidades
 - Inicio de sesión con formulario
 - Navegación entre páginas
 - Uso de rutas con parámetros (`/perfil/:nombre`)
@@ -16,6 +16,6 @@ Este proyecto es un clon simple de WhatsApp Web desarrollado como trabajo final 
 - Contexto para manejar sesión de usuario
 - Responsivo
 
-## ⚠️ Dificultades
+⚠️ Dificultades
 - Manejo de rutas con parámetros
 - Estilos para pantallas pequeñas

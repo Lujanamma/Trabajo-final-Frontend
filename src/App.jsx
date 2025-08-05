@@ -1,44 +1,17 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import Chat from './pages/Chat.jsx';
-import Perfil from './pages/Perfil.jsx';
-import Login from './pages/Login.jsx';
-import RutaPrivada from './components/RutaPrivada.jsx';
+import Chat from './pages/Chat';
+import Perfil from './pages/Perfil';
+import Login from './pages/Login';
+import RutaPrivada from './components/RutaPrivada';
 
 const App = () => {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Login />} />
-        
-        {/* Ruta para lista de chats */}
-        <Route 
-          path="/chat" 
-          element={
-            <RutaPrivada>
-              <Chat />
-            </RutaPrivada>
-          } 
-        />
-        
-        {/* Ruta para chat individual */}
-        <Route
-          path="/chat/:id"
-          element={
-            <RutaPrivada>
-              <Chat />
-            </RutaPrivada>
-          }
-        />
-  
-        <Route
-          path="/perfil/:nombre"
-          element={
-            <RutaPrivada>
-              <Perfil />
-            </RutaPrivada>
-          }
-        />
-        
+        <Route path="/chat" element={<RutaPrivada><Chat /></RutaPrivada>} />
+        <Route path="/chat/:id" element={<RutaPrivada><Chat /></RutaPrivada>} />
+        <Route path="/perfil/:nombre" element={<RutaPrivada><Perfil /></RutaPrivada>} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </BrowserRouter>

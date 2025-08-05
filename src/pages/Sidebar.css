@@ -1,7 +1,7 @@
 .sidebar-container {
   width: 30%;
   min-width: 300px;
-  height: 100vh;
+  height: 100dvh;
   background: #111b21;
   border-right: 1px solid #2a3942;
   display: flex;
@@ -9,13 +9,12 @@
   color: #e9edef;
 }
 
-/* Estilos para móvil */
 .mobile-sidebar {
   position: fixed;
   top: 0;
   left: 0;
   width: 80%;
-  height: 100vh;
+  height: 100dvh;
   z-index: 1000;
   transform: translateX(-100%);
   transition: transform 0.3s ease;
@@ -23,15 +22,6 @@
 
 .mobile-sidebar.active {
   transform: translateX(0);
-}
-
-.mobile-back-button {
-  background: none;
-  border: none;
-  color: #e9edef;
-  margin-right: 15px;
-  display: flex;
-  align-items: center;
 }
 
 .sidebar-header {
@@ -146,7 +136,6 @@
   text-overflow: ellipsis;
 }
 
-/* Media queries para móvil */
 @media (max-width: 768px) {
   .sidebar-container {
     width: 100%;
