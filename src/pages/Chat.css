@@ -191,3 +191,44 @@ body {
     font-size: 1rem;
   }
 }
+/* Solo para móvil - No afecta PC */
+@media (max-width: 768px) {
+  .back-button {
+    display: block;
+    background: none;
+    border: none;
+    color: white;
+    margin-right: 15px;
+  }
+  
+  /* Asegura que el chat ocupe toda la pantalla */
+  .chat-container {
+    position: relative;
+    overflow: hidden;
+    height: 100vh;
+  }
+  
+  /* Oculta sidebar cuando hay chat abierto */
+  .chat-container:has(.chat-window) .sidebar {
+    display: none;
+  }
+}/* Botón de volver para móvil */
+.mobile-back-button {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #005c4b;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 20px;
+  z-index: 1000;
+  display: none; /* Solo se muestra en móvil */
+}
+
+@media (max-width: 768px) {
+  .mobile-back-button {
+    display: block;
+  }
+}

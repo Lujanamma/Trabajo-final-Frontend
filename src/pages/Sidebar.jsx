@@ -1,108 +1,90 @@
 import React, { useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
+import { Search, MoreVertical, Menu } from 'lucide-react';
 import './Sidebar.css';
 
 const Sidebar = () => {
-  const { user, selectedChatId, setSelectedChatId, messages } = useContext(UserContext);
-  const [search, setSearch] = useState('');
+  const { user, chats, messages } = useContext(UserContext);
+  const [searchTerm, setSearchTerm] = useState('');
+  const navigate = useNavigate();
 
-  const chats = [
-    {
-      id: 1,
-      name: 'El Pomberito',
-      avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=Pomberito',
-    },
-    {
-      id: 2,
-      name: 'Locomotora',
-      avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=Locomotora',
-    },
-    {
-      id: 3,
-      name: 'Alejo (Locoarts)',
-      avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=Alejo',
-    },
-    {
-      id: 4,
-      name: 'Valentina (Locoarts)',
-      avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=Valentina',
-    },
-    {
-      id: 5,
-      name: 'Doña Lila',
-      avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=DoñaLila',
-    },
-    {
-      id: 6,
-      name: 'Tito Cable',
-      avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=TitoCable',
-    },
-    {
-      id: 7,
-      name: 'Marquitos 5000',
-      avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=Marquitos5000',
-    },
-    {
-      id: 8,
-      name: 'La Bruja Clara',
-      avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=BrujaClara',
-    },
-    {
-      id: 9,
-      name: 'ÑoñoX',
-      avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=NonoX',
-    },
-    {
-      id: 10,
-      name: 'Bot Marolio',
-      avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=MarolioBot',
-    },
-  ];
+  // Función para resaltar coincidencias
+  const highlightMatch = (text) => {
+    if (!searchTerm || !text) return text;
+    
+    const parts = text.split(new RegExp(`(${searchTerm})`, 'gi'));
+    return parts.map((part, i) => 
+      part.toLowerCase() === searchTerm.toLowerCase() 
+        ? <strong key={i}>{part}</strong> 
+        : part
+    );
+  };
 
-  const filteredChats = chats.filter(chat =>
-    chat.name.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredChats = chats.filter(chat => {
+    const chatMatches = chat.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const messageMatches = messages[chat.id]?.some(msg => 
+      msg.text.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    return chatMatches || messageMatches;
+  });
 
-  const formatTime = (isoString) => {
-    if (!isoString) return '';
-    const date = new Date(isoString);
-    return isNaN(date) ? '' : date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const getLastMessage = (chatId) => {
+    const chatMessages = messages[chatId];
+    return chatMessages?.[chatMessages.length - 1]?.text || "Nuevo chat";
   };
 
   return (
-    <div className="sidebar">
-      <h2>Hola, {user?.name || 'Usuario'}</h2>
-      <input
-        type="text"
-        placeholder="Buscar chat..."
-        value={search}
-        onChange={e => setSearch(e.target.value)}
-      />
-      <ul className="chat-list">
-        {filteredChats.map(chat => {
-          const lastMsg = messages[chat.id]?.slice(-1)[0];
-          return (
-            <li
-              key={chat.id}
-              className={`chat-item ${selectedChatId === chat.id ? 'selected' : ''}`}
-              onClick={() => setSelectedChatId(chat.id)}
-            >
-              <img src={chat.avatar} alt={chat.name} className="chat-avatar" />
-              <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
-                <span>{chat.name}</span>
-                <div className="last-message">
-                  <span style={{ flex: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                    {lastMsg?.text || 'Sin mensajes'}
-                  </span>
-                  <small style={{ fontSize: '0.75rem', color: '#888', marginLeft: '8px', whiteSpace: 'nowrap' }}>
-                    {formatTime(lastMsg?.timestamp)}
-                  </small>
-                </div>
+    <div className="sidebar-container">
+      <div className="sidebar-header">
+        <div className="header-left">
+          <Menu className="icon" onClick={() => {/* Lógica del menú */}} />
+          <h2>Bienvenido, {user?.name || 'Usuario'}</h2>
+        </div>
+        <div className="header-icons">
+          <Search className="icon" onClick={() => {/* Focus en búsqueda */}} />
+          <MoreVertical className="icon" onClick={() => {/* Menú opciones */}} />
+        </div>
+      </div>
+
+      <div className="search-container">
+        <div className="search-input">
+          <Search size={18} className="search-icon" />
+          <input 
+            type="text" 
+            placeholder="Buscar o empezar nuevo chat"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyDown={(e) => e.key === 'Escape' && setSearchTerm('')}
+          />
+        </div>
+      </div>
+
+      <div className="chat-list">
+        {filteredChats.map(chat => (
+          <div
+            key={chat.id}
+            className={`chat-item ${searchTerm ? 'highlight' : ''}`}
+            onClick={() => {
+              navigate(`/chat/${chat.id}`);
+              setSearchTerm('');
+            }}
+          >
+            <img src={chat.avatar} alt={chat.name} className="chat-avatar" />
+            <div className="chat-info">
+              <div className="chat-name-row">
+                <span className="chat-name">{highlightMatch(chat.name)}</span>
+                <span className="chat-time">
+                  {new Date(messages[chat.id]?.[0]?.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </span>
               </div>
-            </li>
-          );
-        })}
-      </ul>
+              <p className="last-message">
+                {highlightMatch(getLastMessage(chat.id))}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

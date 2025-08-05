@@ -10,10 +10,23 @@ const Login = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     const nuevoUsuario = { name: nombre };
     setUser(nuevoUsuario);
-    localStorage.setItem('user', JSON.stringify(nuevoUsuario));
-    navigate('/chat');
+
+    // ✅ Obtener y actualizar chats en localStorage
+    const chatsGuardados = JSON.parse(localStorage.getItem('chats')) || [];
+
+    const nuevoChat = {
+      id: chatsGuardados.length + 1,
+      name: nombre,
+    };
+
+    const nuevosChats = [...chatsGuardados, nuevoChat];
+    localStorage.setItem('chats', JSON.stringify(nuevosChats));
+
+    // ✅ Redirigir al nuevo chat
+    navigate(`/chat/${nuevoChat.id}`);
   };
 
   return (

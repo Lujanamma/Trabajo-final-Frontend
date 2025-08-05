@@ -19,9 +19,3 @@ Este proyecto es un clon simple de WhatsApp Web desarrollado como trabajo final 
 ## ⚠️ Dificultades
 - Manejo de rutas con parámetros
 - Estilos para pantallas pequeñas
-
-## 🚀 Deploy
-👉 [Link a Vercel](https://tu-app.vercel.app)
-
-## 📁 Repositorio
-👉 [Link a GitHub](https://github.com/tu-usuario/tu-repo)

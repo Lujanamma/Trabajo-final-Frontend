@@ -10,13 +10,14 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route
-          path="/chat"
-          element={
-            <RutaPrivada>
-              <Chat />
-            </RutaPrivada>
-          }
-        />
+  path="/chat/:id"
+  element={
+    <RutaPrivada>
+      <Chat />
+    </RutaPrivada>
+  }
+/>
+  
         <Route
           path="/perfil/:nombre"
           element={
