@@ -9,14 +9,26 @@ const App = () => {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Login />} />
+        
+        {/* Ruta para lista de chats */}
+        <Route 
+          path="/chat" 
+          element={
+            <RutaPrivada>
+              <Chat />
+            </RutaPrivada>
+          } 
+        />
+        
+        {/* Ruta para chat individual */}
         <Route
-  path="/chat/:id"
-  element={
-    <RutaPrivada>
-      <Chat />
-    </RutaPrivada>
-  }
-/>
+          path="/chat/:id"
+          element={
+            <RutaPrivada>
+              <Chat />
+            </RutaPrivada>
+          }
+        />
   
         <Route
           path="/perfil/:nombre"
@@ -26,6 +38,7 @@ const App = () => {
             </RutaPrivada>
           }
         />
+        
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </BrowserRouter>

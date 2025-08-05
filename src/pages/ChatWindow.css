@@ -4,18 +4,19 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
+  max-height: -webkit-fill-available; /* Nuevo: mejor soporte para móvil */
   background: #0b141a;
   position: relative;
+  overflow: hidden;
+  box-sizing: border-box; /* Asegura que padding no afecte dimensiones */
 }
 
 /* Cabecera */
-.chat-header {
-  display: flex;
-  align-items: center;
-  padding: 10px 16px;
-  background: #202c33;
-  border-bottom: 1px solid rgba(134, 150, 160, 0.15);
-  min-height: 59px;
+.chat-header, .mobile-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  width: 100%;
 }
 
 .chat-avatar {
@@ -34,14 +35,14 @@
 .chat-name {
   font-weight: 500;
   color: #e9edef;
-  font-size: 16px;
+  font-size: clamp(14px, 2vw, 16px);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .chat-status {
-  font-size: 13px;
+  font-size: clamp(11px, 1.5vw, 13px);
   color: #8696a0;
   white-space: nowrap;
   overflow: hidden;
@@ -50,13 +51,14 @@
 
 .chat-actions {
   display: flex;
-  gap: 20px;
+  gap: clamp(10px, 2vw, 20px);
   margin-left: 10px;
 }
 
 .icon {
   color: #aebac1;
   cursor: pointer;
+  font-size: clamp(16px, 2vw, 20px);
 }
 
 /* Mensajes */
@@ -69,10 +71,11 @@
   background-repeat: repeat;
   display: flex;
   flex-direction: column;
+  overscroll-behavior: contain;
 }
 
 .message {
-  max-width: 65%;
+  max-width: min(65%, 500px);
   margin-bottom: 8px;
   display: flex;
   flex-direction: column;
@@ -89,8 +92,8 @@
 .message-bubble {
   padding: 6px 7px 8px 9px;
   border-radius: 7.5px;
-  font-size: 14.2px;
-  line-height: 19px;
+  font-size: clamp(13px, 1.8vw, 14.2px);
+  line-height: 1.3;
   position: relative;
   word-wrap: break-word;
 }
@@ -133,10 +136,11 @@
 /* Input de mensaje */
 .message-input-container {
   display: flex;
-  padding: 5px 10px;
+  padding: 8px 12px;
   background: #202c33;
   align-items: center;
   min-height: 62px;
+  flex-shrink: 0;
 }
 
 .message-input {
@@ -147,8 +151,8 @@
   border-radius: 8px;
   color: #e9edef;
   outline: none;
-  font-size: 15px;
-  max-height: 40px;
+  font-size: clamp(14px, 1.8vw, 15px);
+  max-height: 100px;
   resize: none;
 }
 
@@ -158,17 +162,6 @@
   margin-left: 10px;
   cursor: pointer;
   padding: 8px;
-}
-
-/* Mobile */
-.back-button {
-  background: transparent;
-  border: none;
-  margin-right: 10px;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 /* Scrollbar */
@@ -187,6 +180,7 @@
   background: #111b21;
   border-bottom: 1px solid #2a3942;
   animation: search-slide 0.3s ease-out;
+  flex-shrink: 0;
 }
 
 .search-input {
@@ -203,13 +197,14 @@
   border: none;
   color: #e9edef;
   margin-left: 10px;
-  font-size: 14px;
+  font-size: clamp(13px, 1.8vw, 14px);
   outline: none;
 }
 
 .search-icon, .clear-icon {
   color: #8696a0;
   cursor: pointer;
+  font-size: clamp(16px, 2vw, 18px);
 }
 
 .clear-icon:hover {
@@ -234,4 +229,90 @@
 @keyframes highlight-fade {
   0% { background-color: rgba(0, 92, 75, 0.9); }
   100% { background-color: rgba(0, 92, 75, 0.6); }
+}
+
+/* ===== ESTILOS PARA MÓVIL ===== */
+@media (max-width: 768px) {
+  /* Header móvil */
+
+
+  .standard-header {
+    display: none;
+  }
+
+  .mobile-back-button {
+    background: none;
+    border: none;
+    color: #e9edef;
+    margin-right: 15px;
+    display: flex;
+  }
+
+  .mobile-contact-info {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    min-width: 0;
+  }
+
+  .mobile-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 12px;
+    flex-shrink: 0;
+  }
+
+  .mobile-contact-name {
+    font-weight: 500;
+    color: #e9edef;
+    font-size: 16px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .mobile-contact-status {
+    font-size: 13px;
+    color: #8696a0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Ajustes para el área de mensajes */
+  .messages-container {
+    flex: 1;
+    padding: 10px 16px;
+    overflow-y: auto;
+    overscroll-behavior-y: contain; /* Evita efectos de scroll no deseados */
+    -webkit-overflow-scrolling: touch; /* Mejor scroll en iOS */
+    background-image: url('../assets/whatsapp-bg.jpeg');
+    background-size: contain;
+    background-repeat: repeat;
+    display: flex;
+    flex-direction: column;
+    min-height: 0; /* Importante para flex correcto */
+  }
+
+  /* Input fijo en la parte inferior */
+  .message-input-container {
+    position: sticky;
+    bottom: 0;
+    background: #202c33;
+    padding: 10px;
+    border-top: 1px solid #2a3942;
+  }
+}
+
+@media (min-width: 769px) {
+
+  
+  .standard-header {
+    display: flex;
+  }
+  
+  .hidden-on-mobile {
+    display: none;
+  }
 }

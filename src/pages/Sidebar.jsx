@@ -1,13 +1,25 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
-import { Search, MoreVertical, Menu } from 'lucide-react';
+import { Search, MoreVertical, Menu, ArrowLeft } from 'lucide-react';
 import './Sidebar.css';
 
-const Sidebar = () => {
+const Sidebar = ({ isMobile, onClose }) => {
   const { user, chats, messages } = useContext(UserContext);
   const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
+  const [isMobileView, setIsMobileView] = useState(false);
+
+  // Detectar si es móvil
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobileView(window.innerWidth <= 768);
+    };
+    
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Función para resaltar coincidencias
   const highlightMatch = (text) => {
@@ -34,19 +46,39 @@ const Sidebar = () => {
     return chatMessages?.[chatMessages.length - 1]?.text || "Nuevo chat";
   };
 
+  const handleChatClick = (chatId) => {
+    navigate(`/chat/${chatId}`);
+    setSearchTerm('');
+    if (isMobileView && onClose) {
+      onClose(); // Cierra el sidebar en móvil al seleccionar chat
+    }
+  };
+
   return (
-    <div className="sidebar-container">
+    <div className={`sidebar-container ${isMobile ? 'mobile-sidebar' : ''}`}>
+      {/* Header del sidebar */}
       <div className="sidebar-header">
         <div className="header-left">
-          <Menu className="icon" onClick={() => {/* Lógica del menú */}} />
+          {isMobileView && (
+            <button 
+              className="mobile-back-button"
+              onClick={onClose}
+            >
+              <ArrowLeft size={24} />
+            </button>
+          )}
           <h2>Bienvenido, {user?.name || 'Usuario'}</h2>
         </div>
         <div className="header-icons">
-          <Search className="icon" onClick={() => {/* Focus en búsqueda */}} />
-          <MoreVertical className="icon" onClick={() => {/* Menú opciones */}} />
+          <Search 
+            className="icon" 
+            onClick={() => document.querySelector('.search-input input')?.focus()} 
+          />
+          <MoreVertical className="icon" />
         </div>
       </div>
 
+      {/* Barra de búsqueda */}
       <div className="search-container">
         <div className="search-input">
           <Search size={18} className="search-icon" />
@@ -60,22 +92,23 @@ const Sidebar = () => {
         </div>
       </div>
 
+      {/* Lista de chats */}
       <div className="chat-list">
         {filteredChats.map(chat => (
           <div
             key={chat.id}
             className={`chat-item ${searchTerm ? 'highlight' : ''}`}
-            onClick={() => {
-              navigate(`/chat/${chat.id}`);
-              setSearchTerm('');
-            }}
+            onClick={() => handleChatClick(chat.id)}
           >
             <img src={chat.avatar} alt={chat.name} className="chat-avatar" />
             <div className="chat-info">
               <div className="chat-name-row">
                 <span className="chat-name">{highlightMatch(chat.name)}</span>
                 <span className="chat-time">
-                  {new Date(messages[chat.id]?.[0]?.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  {new Date(messages[chat.id]?.[0]?.timestamp).toLocaleTimeString([], { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                  })}
                 </span>
               </div>
               <p className="last-message">

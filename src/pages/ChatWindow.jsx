@@ -21,19 +21,22 @@ const ChatWindow = () => {
   const [newMessage, setNewMessage] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [isSearching, setIsSearching] = useState(false);
-  const isMobile = window.innerWidth <= 768;
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const messagesEndRef = useRef(null);
 
   const currentChat = chats.find(chat => chat.id === Number(id));
 
+  // Detectar cambio de tamaño de pantalla
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   // Scroll al final de los mensajes
   useEffect(() => {
-    scrollToBottom();
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, id]);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
 
   const getBotResponse = (botName) => {
     const responses = BOT_RESPONSES[botName] || ['Hola, ¿en qué puedo ayudarte?'];
@@ -57,7 +60,6 @@ const ChatWindow = () => {
 
     setNewMessage('');
 
-    // Todos los chats del 1 al 7 son bots
     if (id >= 1 && id <= 7) {
       setTimeout(() => {
         const botResponse = {
@@ -70,25 +72,10 @@ const ChatWindow = () => {
           ...prev,
           [id]: [...(prev[id] || []), botResponse]
         }));
-
-        // Marcar mensajes como leídos
-        setMessages(prev => {
-          const updatedMessages = {...prev};
-          if (updatedMessages[id]) {
-            updatedMessages[id] = updatedMessages[id].map(msg => {
-              if (msg.from === 'me' && msg.status !== 'read') {
-                return {...msg, status: 'read'};
-              }
-              return msg;
-            });
-          }
-          return updatedMessages;
-        });
       }, 1000 + Math.random() * 1000);
     }
   };
 
-  // Filtrar y resaltar mensajes
   const filteredMessages = (messages[id] || []).filter(msg => 
     msg.text.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -106,41 +93,50 @@ const ChatWindow = () => {
 
   return (
     <div className="chat-window">
-      {/* Cabecera */}
-      <div className="chat-header">
-        {isMobile && (
-          <button onClick={() => navigate('/chat')} className="back-button">
-            <ArrowLeft size={20} />
-          </button>
-        )}
-        
-        <img src={currentChat?.avatar} alt={currentChat?.name} className="chat-avatar" />
-        
-        <div className="chat-info">
-          <div className="chat-name">{currentChat?.name}</div>
-          <div className="chat-status">{currentChat?.isBot ? 'En línea' : 'Última conexión hoy a las 12:45'}</div>
-        </div>
-        
-        <div className="chat-actions">
-          {isSearching ? (
-            <X className="icon" size={20} onClick={() => {
-              setIsSearching(false);
-              setSearchTerm('');
-            }} />
-          ) : (
-            <Search className="icon" size={20} onClick={() => setIsSearching(true)} />
-          )}
-          <Phone className="icon" size={20} />
-          <Video className="icon" size={20} />
-          <MoreVertical className="icon" size={20} />
-        </div>
+      {/* Header para móvil */}
+      {isMobile && (
+  <div className="mobile-header">
+    <button 
+      onClick={onBack} 
+      className="mobile-back-button"
+    >
+      <ArrowLeft size={24} />
+    </button>
+    <div className="mobile-contact-info">
+      <img src={currentChat?.avatar} className="mobile-avatar" />
+      <div>
+        <div className="mobile-contact-name">{currentChat?.name}</div>
       </div>
+    </div>
+  </div>
+)}
+
+      {/* Header normal (desktop) */}
+      {!isMobile && (
+        <div className="standard-header">
+          <img src={currentChat?.avatar} alt={currentChat?.name} className="chat-avatar" />
+          <div className="chat-info">
+            <div className="chat-name">{currentChat?.name}</div>
+            <div className="chat-status">{currentChat?.isBot ? 'En línea' : 'Últ. conexión hoy a las 12:45'}</div>
+          </div>
+          <div className="chat-actions">
+            {isSearching ? (
+              <X className="icon" onClick={() => setIsSearching(false)} />
+            ) : (
+              <Search className="icon" onClick={() => setIsSearching(true)} />
+            )}
+            <Phone className="icon" />
+            <Video className="icon" />
+            <MoreVertical className="icon" />
+          </div>
+        </div>
+      )}
 
       {/* Barra de búsqueda */}
       {isSearching && (
         <div className="search-container">
           <div className="search-input">
-            <Search size={18} className="search-icon" />
+            <Search className="search-icon" />
             <input
               type="text"
               placeholder="Buscar en este chat..."
@@ -149,7 +145,7 @@ const ChatWindow = () => {
               autoFocus
             />
             {searchTerm && (
-              <X size={18} className="clear-icon" onClick={() => setSearchTerm('')} />
+              <X className="clear-icon" onClick={() => setSearchTerm('')} />
             )}
           </div>
         </div>
@@ -160,21 +156,14 @@ const ChatWindow = () => {
         {(searchTerm ? filteredMessages : messages[id] || []).map((msg, index) => (
           <div key={index} className={`message ${msg.from === 'me' ? 'me' : 'them'}`}>
             <div className="message-bubble">
-              <p>{highlightText(msg.text)}</p>
+              {highlightText(msg.text)}
               <div className="message-meta">
                 <span className="message-time">
                   {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </span>
                 {msg.from === 'me' && (
                   <span className="message-status">
-                    {msg.status === 'read' ? (
-                      <>
-                        <Check size={12} color="#53bdeb" />
-                        <Check size={12} color="#53bdeb" style={{ marginLeft: -4 }} />
-                      </>
-                    ) : (
-                      <Check size={12} color="#8696a0" />
-                    )}
+                    <Check size={12} color={msg.status === 'read' ? "#53bdeb" : "#8696a0"} />
                   </span>
                 )}
               </div>
@@ -186,15 +175,24 @@ const ChatWindow = () => {
 
       {/* Input de mensaje */}
       <div className="message-input-container">
-        <input
-          type="text"
+        <textarea
           className="message-input"
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
-          onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+          onKeyPress={(e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault();
+              handleSendMessage();
+            }
+          }}
           placeholder="Escribe un mensaje..."
+          rows="1"
         />
-        <button className="send-button" onClick={handleSendMessage}>
+        <button 
+          className="send-button" 
+          onClick={handleSendMessage} 
+          disabled={!newMessage.trim()}
+        >
           <Send size={20} color={newMessage.trim() ? "#008069" : "#8696a0"} />
         </button>
       </div>
